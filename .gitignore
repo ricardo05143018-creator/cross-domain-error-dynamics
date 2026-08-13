@@ -1,0 +1,19 @@
+# virtual environments
+.venv/
+venv/
+
+# python cache
+__pycache__/
+*.py[cod]
+
+# ide files
+.idea/
+
+# test and tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# operating system files
+.DS_Store
+Thumbs.db
