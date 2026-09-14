@@ -1,31 +1,20 @@
 # Cross-Domain Error Dynamics
 
-This project started with a simple question from two modeling projects: when models in unrelated domains miss, do their errors move together?
+This project began with a question from two modeling projects: when models in unrelated domains miss, do their errors move together?
 
-Version 1 made a four-window descriptive comparison. Version 2 replaced that small comparison with a longer synthetic synchronous baseline. Version 3 allowed one series to trail the other. Version 4 moved the comparison from the simulated series themselves to their prediction residuals. Version 5 added an IID permutation baseline at lag 0 while keeping the lag scan descriptive. Version 5.1 adds paired moving-block resampling to examine the stability of the observed correlation and selected lag.
+The early versions build increasingly structured synthetic examples: first a short descriptive comparison, then a longer synchronous baseline, lag scans, and residual-based scans. The later versions turn to inference: whether a correlation or selected lag remains meaningful once temporal dependence is taken seriously.
 
 ## Current version
 
-### v5.1 – Paired moving-block stability check
+### v6.0 – IID-permutation diagnostic under autocorrelated null data
 
-Added September 9, 2026.
+Added September 14, 2026.
 
-Version 5.1 focuses on resampling stability. It generates two autocorrelated synthetic series and resamples them using shared moving-block indices. Applying the same sampled indices to both series preserves their pairing while retaining short-range temporal structure within each block.
+Version 6 tests the IID-permutation baseline from Version 5 under a setting where it should reject rarely: two independently generated AR(1) series. Each pair has 300 observations, an autoregressive coefficient of 0.85, and no cross-series relationship. For each pair, the script scans lags from `-10` to `+10`, records the largest absolute correlation, and assigns an IID-permutation p-value using 199 permutations of one series.
 
-Two quantities are tracked across the resamples. The first is the synchronous correlation. The second is the lag selected by scanning integer offsets from `-10` through `+10` for the largest absolute correlation.
+With the fixed seed used in the script, 6 of 12 independent pairs have an IID p-value below 0.05. The largest observed correlations range from `|r| = 0.080` to `|r| = 0.350`, at lags selected by the scan.
 
-For the fixed simulation seed:
-
-```text
-Observed Synchronous r:  0.0635
-Resampled Mean r:        0.0079
-Resampled Std Dev:       0.1009
-
-Modal Selected Lag:      -2 windows
-Lag Standard Deviation:  5.0792
-```
-
-The wide lag distribution indicates that the selected lag is not especially stable in this simulation. Because both series are resampled with the same block indices, the procedure preserves their observed cross-series relationship rather than constructing an independence null.
+The diagnostic shows why the IID baseline needs to be checked separately from the lag scan. Permuting individual observations removes the serial structure of an AR(1) series, so its permutation distribution does not represent the null distribution of an autocorrelated series. This run is a diagnostic rather than an estimate of the rejection rate; the next step is a larger Monte Carlo experiment.
 
 ## Version history
 
@@ -37,6 +26,7 @@ The wide lag distribution indicates that the selected lag is not especially stab
 | `v4.0` | August 28, 2026 | Moved the lag scan to standardized prediction residuals and injected opposite-signed shocks with a three-index offset. |
 | `v5.0` | September 6, 2026 | Added a lag-0 IID permutation baseline alongside the exploratory lag scan. |
 | `v5.1` | September 9, 2026 | Added paired moving-block resampling for synchronous-correlation and selected-lag stability checks. |
+| `v6.0` | September 14, 2026 | Tests the IID-permutation approach on independent autocorrelated pairs and records how often the lag-scan statistic is declared significant. |
 
 ## Repository contents
 
@@ -48,6 +38,7 @@ The wide lag distribution indicates that the selected lag is not especially stab
 | `v4_0_residual_lag_scan.py` | Runs the exploratory lag scan on standardized prediction residuals. |
 | `v5_0_iid_permutation_baseline.py` | Adds the lag-0 IID permutation baseline while retaining the exploratory lag scan. |
 | `v5_1_paired_block_stability.py` | Runs paired moving-block checks for correlation and lag-selection stability. |
+| `v6_0_false_positive_diagnostic.py` | Runs the IID-permutation diagnostic on independent AR(1) pairs. |
 | `requirements.txt` | Lists the Python dependency required by the scripts. |
 
 ## Running the scripts
@@ -60,6 +51,7 @@ python v3_0_lag_scan_simulation.py
 python v4_0_residual_lag_scan.py
 python v5_0_iid_permutation_baseline.py
 python v5_1_paired_block_stability.py
+python v6_0_false_positive_diagnostic.py
 ```
 
 Later methodological changes will be added as new files so that the earlier baselines remain visible.
