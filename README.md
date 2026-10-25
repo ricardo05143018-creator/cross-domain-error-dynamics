@@ -10,6 +10,13 @@ The first versions explored that question with synthetic examples, starting with
 
 Version 7 is the final version of this project. Earlier versions are kept in the repository to show how the analysis changed over time.
 
+## Related Research Paper
+
+This project is closely connected to my independent research paper, *Correcting Selection Bias in Lag-Optimized Time Series Dependence Tests*, which examines statistical inference after lag selection under serial dependence.
+
+- [Read the Paper (PDF)](https://github.com/ricardo05143018-creator/lag-optimized-time-series-tests/blob/main/paper/Lag_Optimized_Time_Series_Tests.pdf)
+- [Paper & Reproducibility Code](https://github.com/ricardo05143018-creator/lag-optimized-time-series-tests)
+
 ## Final version
 
 ### v7.0 – Monte Carlo Type-I error check for IID-permutation lag scans
